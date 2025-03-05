@@ -68,7 +68,11 @@ final class MovieQuizViewController: UIViewController {
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        let quizStartViewModel = convert(model: questions[0])
+        show(quiz: quizStartViewModel)
     }
+    
     
     @IBAction private func yesButtonClicked(_ sender: UIButton) {
         let currentQuestion = questions[currentQuestionIndex]
@@ -102,6 +106,7 @@ final class MovieQuizViewController: UIViewController {
     private func showAnswerResult(isCorrect: Bool) {
         imageView.layer.masksToBounds = true
         imageView.layer.borderWidth = 8
+        imageView.layer.cornerRadius = 20
         imageView.layer.borderColor = isCorrect ? UIColor.green.cgColor : UIColor.red.cgColor
         
         if isCorrect == true {
@@ -136,7 +141,9 @@ final class MovieQuizViewController: UIViewController {
     
     // приватный метод, который содержит логику перехода в один из сценариев; метод ничего не принимает и ничего не возвращает
     private func showNextQuestionOrResults() {
-      if currentQuestionIndex == questions.count - 1 {
+        imageView.layer.borderWidth = 0
+        
+        if currentQuestionIndex == questions.count - 1 {
           let resultViewModel = QuizResultsViewModel(title: "Этот раунд окончен!",
                                                      text: "Ваш результат: \(correctAnswer)/10",
                                                      buttonText: "Сыграть еще раз")
