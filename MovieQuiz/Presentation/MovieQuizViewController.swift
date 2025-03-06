@@ -2,30 +2,30 @@ import UIKit
 
 final class MovieQuizViewController: UIViewController {
     
-    // вью модель для состояния "Вопрос показан"
     struct QuizStepViewModel {
         let image: UIImage
         let question: String
         let questionNumber: String
     }
     
-    // вью модель для состояния "Результат квиза"
     struct QuizResultsViewModel {
         let title: String
         let text: String
         let buttonText: String
     }
     
-    // структура вопроса
     struct QuizQuestion {
         let image: String
         let text: String
         let correctAnswer: Bool
     }
     
+    
     @IBOutlet private var imageView: UIImageView!
     @IBOutlet private var textLabel: UILabel!
     @IBOutlet private var counterLabel: UILabel!
+    @IBOutlet private var yesButton: UIButton!
+    @IBOutlet private var noButton: UIButton!
     
     private var currentQuestionIndex = 0
     private var correctAnswer = 0
@@ -64,7 +64,6 @@ final class MovieQuizViewController: UIViewController {
     ]
     
     
-    
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -86,7 +85,7 @@ final class MovieQuizViewController: UIViewController {
         showAnswerResult(isCorrect: currentQuestion.correctAnswer == userAnswer)
     }
     
-    // метод конвертации, который принимает моковый вопрос и возвращает вью модель для экрана вопроса
+    
     private func convert(model: QuizQuestion) -> QuizStepViewModel {
         return QuizStepViewModel(
             image: UIImage(named: model.image) ?? UIImage(),
@@ -95,15 +94,18 @@ final class MovieQuizViewController: UIViewController {
         )
     }
     
-    // приватный метод вывода на экран вопроса, который принимает на вход вью модель вопроса и ничего не возвращает
+    
     private func show(quiz step: QuizStepViewModel) {
         imageView.image = step.image
         textLabel.text = step.question
         counterLabel.text = step.questionNumber
     }
     
-    // приватный метод, который меняет цвет рамки, принимает на вход булевое значение и ничего не возвращает
+    
     private func showAnswerResult(isCorrect: Bool) {
+        yesButton.isEnabled = false
+        noButton.isEnabled = false
+        
         imageView.layer.masksToBounds = true
         imageView.layer.borderWidth = 8
         imageView.layer.cornerRadius = 20
@@ -112,14 +114,15 @@ final class MovieQuizViewController: UIViewController {
         if isCorrect == true {
             correctAnswer += 1
         }
-        
+    
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
             self.showNextQuestionOrResults()
         }
+        
     }
 
-    // приватный метод для показа результатов раунда квиза
-    private func show(quiz result: QuizResultsViewModel) {
+    
+    private func showResult(quiz result: QuizResultsViewModel) {
         let alert = UIAlertController(title: result.title,
                                       message: result.text,
                                       preferredStyle: .alert)
@@ -139,18 +142,20 @@ final class MovieQuizViewController: UIViewController {
         self.present(alert, animated: true, completion: nil)
     }
     
-    // приватный метод, который содержит логику перехода в один из сценариев; метод ничего не принимает и ничего не возвращает
+    
     private func showNextQuestionOrResults() {
         imageView.layer.borderWidth = 0
+        
+        yesButton.isEnabled = true
+        noButton.isEnabled = true
         
         if currentQuestionIndex == questions.count - 1 {
           let resultViewModel = QuizResultsViewModel(title: "Этот раунд окончен!",
                                                      text: "Ваш результат: \(correctAnswer)/10",
                                                      buttonText: "Сыграть еще раз")
-          show(quiz: resultViewModel)
+          showResult(quiz: resultViewModel)
       } else {
         currentQuestionIndex += 1
-          
         let nextQuestion = questions[currentQuestionIndex]
         let nextQuizStepViewModel = convert(model: nextQuestion)
           
