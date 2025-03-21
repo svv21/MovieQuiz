@@ -104,20 +104,23 @@ final class MovieQuizViewController: UIViewController {
         if isCorrect {
             correctAnswer += 1
         }
-    
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
+            guard let self else { return }
             self.showNextQuestionOrResults()
         }
         
     }
-
+    
     
     private func showResult(quiz result: QuizResultsViewModel) {
         let alert = UIAlertController(title: result.title,
                                       message: result.text,
                                       preferredStyle: .alert)
         
-        let action = UIAlertAction(title: result.buttonText, style: .default) { _ in
+        let action = UIAlertAction(title: result.buttonText, style: .default) { [weak self] _ in
+            guard let self else { return }
+            
             self.currentQuestionIndex = 0
             self.correctAnswer = 0
             
@@ -140,17 +143,17 @@ final class MovieQuizViewController: UIViewController {
         noButton.isEnabled = true
         
         if currentQuestionIndex == questions.count - 1 {
-          let resultViewModel = QuizResultsViewModel(title: "Этот раунд окончен!",
-                                                     text: "Ваш результат: \(correctAnswer)/10",
-                                                     buttonText: "Сыграть еще раз")
-          showResult(quiz: resultViewModel)
-      } else {
-        currentQuestionIndex += 1
-        let nextQuestion = questions[currentQuestionIndex]
-        let nextQuizStepViewModel = convert(model: nextQuestion)
-          
-        show(quiz: nextQuizStepViewModel)
-      }
+            let resultViewModel = QuizResultsViewModel(title: "Этот раунд окончен!",
+                                                       text: "Ваш результат: \(correctAnswer)/10",
+                                                       buttonText: "Сыграть еще раз")
+            showResult(quiz: resultViewModel)
+        } else {
+            currentQuestionIndex += 1
+            let nextQuestion = questions[currentQuestionIndex]
+            let nextQuizStepViewModel = convert(model: nextQuestion)
+            
+            show(quiz: nextQuizStepViewModel)
+        }
     }
     
 }
