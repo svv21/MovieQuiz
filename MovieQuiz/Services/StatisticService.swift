@@ -56,9 +56,9 @@ final class StatisticService : StatisticServiceProtocol{
             return GameResult(correctAnswers: correctAnswers, totalQuestions: totalQuestions, date: date)
         }
         set {
-            storage.set(newValue, forKey: Keys.correctAnswers.rawValue)
-            storage.set(newValue, forKey: Keys.totalQuestions.rawValue)
-            storage.set(newValue, forKey: Keys.date.rawValue)
+            storage.set(newValue.correctAnswers, forKey: Keys.correctAnswers.rawValue)
+            storage.set(newValue.totalQuestions, forKey: Keys.totalQuestions.rawValue)
+            storage.set(newValue.date, forKey: Keys.date.rawValue)
         }
     }
     
@@ -69,9 +69,11 @@ final class StatisticService : StatisticServiceProtocol{
     
     func store(currentGameResult: GameResult) {
         let totalGamesQuestions = storage.integer(forKey: Keys.totalGamesQuestions.rawValue) + currentGameResult.totalQuestions
+        
         storage.set(totalGamesQuestions, forKey: Keys.totalGamesQuestions.rawValue)
         
         let totalCorrectAnswers = storage.integer(forKey: Keys.totalCorrectAnswers.rawValue) + currentGameResult.correctAnswers
+        
         storage.set(totalCorrectAnswers, forKey: Keys.totalCorrectAnswers.rawValue)
         
         gamesCount += 1

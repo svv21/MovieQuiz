@@ -17,7 +17,6 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     private var currentQuestion: QuizQuestion?
     private var statisticService: StatisticServiceProtocol = StatisticService()
     
-    
     // MARK: - Lifecycle
     
     override func viewDidLoad() {
@@ -119,8 +118,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
         
         self.present(alert, animated: true, completion: nil)
     }
-    
-    
+        
     private func showNextQuestionOrResults() {
         imageView.layer.borderWidth = 0
         
@@ -128,12 +126,12 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
         noButton.isEnabled = true
         
         if currentQuestionIndex == questionsAmount - 1 {
-            statisticService.store(currentGameResult: GameResult(correctAnswers: 0, totalQuestions: questionsAmount, date: Date()))
+            statisticService.store(currentGameResult: GameResult(correctAnswers: correctAnswer, totalQuestions: questionsAmount, date: Date()))
             let resultViewModel = QuizResultsViewModel(title: "Этот раунд окончен!",
                                                        text: """
                                                              Ваш результат: \(correctAnswer)/\(questionsAmount)
                                                              Количество сыгранных квизов:\(statisticService.gamesCount)
-                                                             Рекорд:\(statisticService.bestGame.correctAnswers)/\(questionsAmount) (\(statisticService.bestGame.date.dateTimeString))
+                                                             Рекорд:\(statisticService.bestGame.correctAnswers)/\(statisticService.bestGame.totalQuestions) (\(statisticService.bestGame.date.dateTimeString))
                                                              Средняя точность: \(String(format: "%.2f", statisticService.averageAccuracy))%
                                                              """,
                                                        buttonText: "Сыграть еще раз")
@@ -141,7 +139,6 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
             showResult(quiz: resultViewModel)
         } else {
             currentQuestionIndex += 1
-            
             questionFactory.requestNextQuestion()
         }
     }
