@@ -11,16 +11,19 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     @IBOutlet private var noButton: UIButton!
     
     private var currentQuestionIndex = 0
-    private var correctAnswer = 0
+    private var correctAnswer: Int = 0
     private let questionsAmount: Int = 10
     private var questionFactory: QuestionFactoryProtocol = QuestionFactory()
     private var currentQuestion: QuizQuestion?
+    private var statisticService: StatisticServiceProtocol = StatisticService()
     
     
     // MARK: - Lifecycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        statisticService = StatisticService()
         
         let questionFactory = QuestionFactory()
         questionFactory.instalDelegat(delegat: self)
@@ -125,9 +128,16 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
         noButton.isEnabled = true
         
         if currentQuestionIndex == questionsAmount - 1 {
+            statisticService.store(currentGameResult: GameResult(correctAnswers: 0, totalQuestions: questionsAmount, date: Date()))
             let resultViewModel = QuizResultsViewModel(title: "Этот раунд окончен!",
-                                                       text: "Ваш результат: \(correctAnswer)/10",
+                                                       text: """
+                                                             Ваш результат: \(correctAnswer)/\(questionsAmount)
+                                                             Количество сыгранных квизов:\(statisticService.gamesCount)
+                                                             Рекорд:\(statisticService.bestGame.correctAnswers)/\(questionsAmount) (\(statisticService.bestGame.date.dateTimeString))
+                                                             Средняя точность: \(String(format: "%.2f", statisticService.averageAccuracy))%
+                                                             """,
                                                        buttonText: "Сыграть еще раз")
+            
             showResult(quiz: resultViewModel)
         } else {
             currentQuestionIndex += 1
