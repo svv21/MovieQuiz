@@ -16,11 +16,14 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     private var questionFactory: QuestionFactoryProtocol = QuestionFactory()
     private var currentQuestion: QuizQuestion?
     private var statisticService: StatisticServiceProtocol = StatisticService()
+    private var alertPresenter: AlertPresenter?
     
     // MARK: - Lifecycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        alertPresenter = AlertPresenter(controller: self)
         
         statisticService = StatisticService()
         
@@ -30,7 +33,6 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
         
         questionFactory.requestNextQuestion()
     }
-    
     
     // MARK: - QuestionFactoryDelegate
     
@@ -99,26 +101,25 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
         
     }
     
+    /*
+     { [weak self] _ in
+         guard let self else { return }
+         
+         self.currentQuestionIndex = 0
+         self.correctAnswer = 0
+         
+         self.questionFactory.requestNextQuestion()
+     }
+     
+     */
     
-    private func showResult(quiz result: QuizResultsViewModel) {
-        let alert = UIAlertController(title: result.title,
-                                      message: result.text,
-                                      preferredStyle: .alert)
+    private func finishGame(quiz result: QuizResultsViewModel) {
         
-        let action = UIAlertAction(title: result.buttonText, style: .default) { [weak self] _ in
-            guard let self else { return }
-            
-            self.currentQuestionIndex = 0
-            self.correctAnswer = 0
-            
-            self.questionFactory.requestNextQuestion()
-        }
         
-        alert.addAction(action)
         
-        self.present(alert, animated: true, completion: nil)
+        alertPresenter?.showAlert(alertModel: AlertModel)
     }
-        
+    
     private func showNextQuestionOrResults() {
         imageView.layer.borderWidth = 0
         
@@ -136,7 +137,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
                                                              """,
                                                        buttonText: "Сыграть еще раз")
             
-            showResult(quiz: resultViewModel)
+            finishGame(quiz: resultViewModel)
         } else {
             currentQuestionIndex += 1
             questionFactory.requestNextQuestion()
