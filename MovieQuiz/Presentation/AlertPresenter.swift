@@ -9,9 +9,10 @@ import UIKit
 
 class AlertPresenter {
     
-    var controller: MovieQuizViewController
-    init(controller: MovieQuizViewController) {
-        self.controller = controller
+    var delegate: AlertPresenterDelegateProtocol
+    
+    init(delegate: AlertPresenterDelegateProtocol) {
+        self.delegate = delegate
     }
     
     func showAlert(alertModel: AlertModel) {
@@ -19,11 +20,10 @@ class AlertPresenter {
                                       message: alertModel.message,
                                       preferredStyle: .alert)
         
-        let action = UIAlertAction(title: alertModel.buttonText, style: .default) { _ in
-        }
+        let action = UIAlertAction(title: alertModel.buttonText, style: .default, handler: alertModel.completion)
         
         alert.addAction(action)
         
-        controller.present(alert, animated: true, completion: nil)
+        delegate.presentAlert(alert: alert)
     }
 }

@@ -1,6 +1,6 @@
 import UIKit
 
-final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
+final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, AlertPresenterDelegateProtocol {
     
     // MARK: - Actions
     
@@ -23,7 +23,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        alertPresenter = AlertPresenter(controller: self)
+        alertPresenter = AlertPresenter(delegate: self)
         
         statisticService = StatisticService()
         
@@ -47,6 +47,10 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
         }
     }
     
+    // MARK: - AlertPresenterDelegateProtocol
+    func presentAlert(alert: UIAlertController) {
+        self.present(alert, animated: true, completion: nil)
+    }
     
     // MARK: - Private functions
     
@@ -101,23 +105,20 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
         
     }
     
-    /*
-     { [weak self] _ in
-         guard let self else { return }
-         
-         self.currentQuestionIndex = 0
-         self.correctAnswer = 0
-         
-         self.questionFactory.requestNextQuestion()
-     }
-     
-     */
-    
     private func finishGame(quiz result: QuizResultsViewModel) {
+        let alertModel = AlertModel(title: result.title,
+                                    message: result.text,
+                                    buttonText: result.buttonText,
+                                    completion: { [weak self] _ in
+            guard let self else { return }
+            
+            self.currentQuestionIndex = 0
+            self.correctAnswer = 0
+            
+            self.questionFactory.requestNextQuestion()
+        })
         
-        
-        
-        alertPresenter?.showAlert(alertModel: AlertModel)
+        alertPresenter!.showAlert(alertModel: alertModel)
     }
     
     private func showNextQuestionOrResults() {
