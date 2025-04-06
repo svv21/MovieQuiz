@@ -19,7 +19,6 @@ final class StatisticService : StatisticServiceProtocol{
         case totalGamesQuestions
     }
     
-    
     var gamesCount: Int {
         get {
             storage.integer(forKey: Keys.gamesCount.rawValue)
@@ -82,5 +81,4 @@ final class StatisticService : StatisticServiceProtocol{
             bestGame = currentGameResult
         }
     }
-    
 }

@@ -68,6 +68,10 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
         showAnswerResult(isCorrect: currentQuestion.correctAnswer == userAnswer)
     }
     
+    private func setAnswerButtonsState(isEnabled: Bool) {
+        yesButton.isEnabled = isEnabled
+        noButton.isEnabled = isEnabled
+    }
     
     private func convert(model: QuizQuestion) -> QuizStepViewModel {
         return QuizStepViewModel(
@@ -106,17 +110,19 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
     }
     
     private func finishGame(quiz result: QuizResultsViewModel) {
-        let alertModel = AlertModel(title: result.title,
-                                    message: result.text,
-                                    buttonText: result.buttonText,
-                                    completion: { [weak self] _ in
+        let alertModel = AlertModel(
+                         title: result.title,
+                         message: result.text,
+                         buttonText: result.buttonText,
+                         completion: { [weak self] _ in
             guard let self else { return }
             
             self.currentQuestionIndex = 0
             self.correctAnswer = 0
             
             self.questionFactory.requestNextQuestion()
-        })
+        }
+        )
         
         alertPresenter!.showAlert(alertModel: alertModel)
     }
@@ -124,19 +130,20 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
     private func showNextQuestionOrResults() {
         imageView.layer.borderWidth = 0
         
-        yesButton.isEnabled = true
-        noButton.isEnabled = true
+        setAnswerButtonsState(isEnabled: true)
         
         if currentQuestionIndex == questionsAmount - 1 {
             statisticService.store(currentGameResult: GameResult(correctAnswers: correctAnswer, totalQuestions: questionsAmount, date: Date()))
-            let resultViewModel = QuizResultsViewModel(title: "Этот раунд окончен!",
-                                                       text: """
-                                                             Ваш результат: \(correctAnswer)/\(questionsAmount)
-                                                             Количество сыгранных квизов:\(statisticService.gamesCount)
-                                                             Рекорд:\(statisticService.bestGame.correctAnswers)/\(statisticService.bestGame.totalQuestions) (\(statisticService.bestGame.date.dateTimeString))
-                                                             Средняя точность: \(String(format: "%.2f", statisticService.averageAccuracy))%
-                                                             """,
-                                                       buttonText: "Сыграть еще раз")
+            let resultViewModel = QuizResultsViewModel(
+                                  title: "Этот раунд окончен!",
+                                  text: """
+                                        Ваш результат: \(correctAnswer)/\(questionsAmount)
+                                        Количество сыгранных квизов:\(statisticService.gamesCount)
+                                        Рекорд:\(statisticService.bestGame.correctAnswers)/\(statisticService.bestGame.totalQuestions) (\(statisticService.bestGame.date.dateTimeString))
+                                        Средняя точность: \(String(format: "%.2f", statisticService.averageAccuracy))%
+                                        """,
+                                  buttonText: "Сыграть еще раз"
+            )
             
             finishGame(quiz: resultViewModel)
         } else {

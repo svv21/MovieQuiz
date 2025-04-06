@@ -7,7 +7,7 @@
 
 import UIKit
 
-class AlertPresenter {
+final class AlertPresenter {
     
     var delegate: AlertPresenterDelegateProtocol
     
@@ -16,11 +16,17 @@ class AlertPresenter {
     }
     
     func showAlert(alertModel: AlertModel) {
-        let alert = UIAlertController(title: alertModel.title,
-                                      message: alertModel.message,
-                                      preferredStyle: .alert)
+        let alert = UIAlertController(
+            title: alertModel.title,
+            message: alertModel.message,
+            preferredStyle: .alert
+        )
         
-        let action = UIAlertAction(title: alertModel.buttonText, style: .default, handler: alertModel.completion)
+        let action = UIAlertAction(
+            title: alertModel.buttonText,
+            style: .default,
+            handler: alertModel.completion
+        )
         
         alert.addAction(action)
         
