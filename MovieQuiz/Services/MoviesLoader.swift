@@ -39,18 +39,5 @@ struct MoviesLoader: MoviesLoading {
         }
     }
 }
-        /*{ result in
-            if let error = result as? Error {
-                handler(.failure(error))
-            }
-            
-            guard let data = result as? Data else { return }
-                do {
-                    let movie = try JSONDecoder().decode(MostPopularMovies.self, from: data)
-                    handler(.success(movie))
-                } catch {
-                    handler(.failure(error))
-                }
-            }*/
 
 

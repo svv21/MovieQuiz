@@ -99,13 +99,13 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
                                     message: message,
                                     buttonText: "Попробовать ещё раз",
                                     completion: { [weak self] _ in
-                guard let self else { return }
-                
-                self.currentQuestionIndex = 0
-                self.correctAnswer = 0
-                
-                self.questionFactory?.requestNextQuestion()
-            }
+            guard let self else { return }
+            
+            self.currentQuestionIndex = 0
+            self.correctAnswer = 0
+            
+            self.questionFactory?.requestNextQuestion()
+        }
         )
         alertPresenter!.showAlert(alertModel: errorAlert)
     }
