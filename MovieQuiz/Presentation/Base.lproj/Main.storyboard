@@ -107,14 +107,19 @@
                                     </stackView>
                                 </subviews>
                             </stackView>
+                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="medium" translatesAutoresizingMaskIntoConstraints="NO" id="ZAY-NW-xw9">
+                                <rect key="frame" x="197" y="438" width="20" height="20"/>
+                            </activityIndicatorView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                         <color key="backgroundColor" name="Color"/>
                         <constraints>
                             <constraint firstItem="Ulj-xK-SaM" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="20" id="BQy-cZ-F6B"/>
                             <constraint firstItem="Ulj-xK-SaM" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="10" id="CeD-ft-QYL"/>
+                            <constraint firstItem="ZAY-NW-xw9" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="NyX-WC-2qX"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="Ulj-xK-SaM" secondAttribute="trailing" constant="20" id="O2B-1D-YvY"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="Ulj-xK-SaM" secondAttribute="bottom" id="q8H-Ga-poS"/>
+                            <constraint firstItem="ZAY-NW-xw9" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="ytt-o1-c5l"/>
                         </constraints>
                         <userDefinedRuntimeAttributes>
                             <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
@@ -123,6 +128,7 @@
                         </userDefinedRuntimeAttributes>
                     </view>
                     <connections>
+                        <outlet property="activityIndicator" destination="ZAY-NW-xw9" id="DDw-V2-syW"/>
                         <outlet property="counterLabel" destination="AQL-rK-lzf" id="c7e-mb-8bW"/>
                         <outlet property="imageView" destination="Glc-NS-8WQ" id="Y8k-if-Ghz"/>
                         <outlet property="noButton" destination="QSK-vh-P5m" id="de0-ug-MB1"/>
