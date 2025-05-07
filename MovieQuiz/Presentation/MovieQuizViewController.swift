@@ -11,8 +11,6 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
     @IBOutlet private var noButton: UIButton!
     @IBOutlet private var activityIndicator: UIActivityIndicatorView!
     
-    private var correctAnswer: Int = 0
-    
     private var questionFactory: QuestionFactory?
     private var statisticService: StatisticServiceProtocol = StatisticService()
     private var alertPresenter: AlertPresenter?
@@ -92,8 +90,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
                                     completion: { [weak self] _ in
             guard let self else { return }
             
-            self.presenter.resetQuestionIndex()
-            self.correctAnswer = 0
+            self.presenter.restartGame()
             
             self.questionFactory?.requestNextQuestion()
         }
@@ -117,13 +114,10 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
         imageView.layer.cornerRadius = 20
         imageView.layer.borderColor = isCorrect ? UIColor(named: "Color 2")?.cgColor : UIColor(named: "Color 3")?.cgColor
         
-        if isCorrect {
-            correctAnswer += 1
-        }
+        presenter.didAnswer(isCorrectAnswer: isCorrect)
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
             guard let self else { return }
-            self.presenter.correctAnswer = self.correctAnswer
             self.presenter.questionFactory = self.questionFactory
             self.presenter.statisticService = self.statisticService
             self.presenter.showNextQuestionOrResults()
@@ -139,8 +133,8 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
             completion: { [weak self] _ in
                 guard let self else { return }
                 
-                self.presenter.resetQuestionIndex()
-                self.correctAnswer = 0
+                self.presenter.restartGame()
+                self.presenter.correctAnswer = 0
                 
                 self.questionFactory?.requestNextQuestion()
             }
