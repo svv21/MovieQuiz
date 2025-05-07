@@ -98,6 +98,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
         let errorAlert = AlertModel(title: "Ошибка",
                                     message: message,
                                     buttonText: "Попробовать ещё раз",
+                                    accessibilityIdentifier: "networkErrorAlert",
                                     completion: { [weak self] _ in
             guard let self else { return }
             
@@ -151,6 +152,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
             title: result.title,
             message: result.text,
             buttonText: result.buttonText,
+            accessibilityIdentifier: "GameResultsAlert",
             completion: { [weak self] _ in
                 guard let self else { return }
                 
