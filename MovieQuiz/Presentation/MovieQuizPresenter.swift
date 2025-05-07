@@ -7,14 +7,34 @@
 
 import UIKit
 
-final class MovieQuizPresenter {
+final class MovieQuizPresenter: QuestionFactoryDelegate {
     private var currentQuestionIndex = 0
     let questionsAmount: Int = 10
     var currentQuestion: QuizQuestion?
     var correctAnswer: Int = 0
-    var questionFactory: QuestionFactory?
+    
     var statisticService: StatisticServiceProtocol = StatisticService()
-    weak var viewController: MovieQuizViewController?
+    private var questionFactory: QuestionFactoryProtocol?
+    private weak var viewController: MovieQuizViewController?
+    
+    init(viewController: MovieQuizViewController) {
+        self.viewController = viewController
+        
+        questionFactory = QuestionFactory(moviesLoader: MoviesLoader(), delegat: self)
+        questionFactory?.loadData()
+        viewController.showLoadingIndicator()
+    }
+    
+    // MARK: - QuestionFactoryDelegate
+    
+    func didLoadDataFromServer() {
+        viewController?.hideLoadingIndicator()
+        questionFactory?.requestNextQuestion()
+    }
+    
+    func didFailToLoadData(with error: Error) {
+        viewController?.showNetworkError(message: error.localizedDescription)
+    }
     
     func isLastQuestion() -> Bool {
         currentQuestionIndex == questionsAmount - 1
@@ -23,6 +43,7 @@ final class MovieQuizPresenter {
     func restartGame() {
         currentQuestionIndex = 0
         correctAnswer = 0
+        questionFactory?.requestNextQuestion()
     }
     
     func switchToNextQuestion() {
