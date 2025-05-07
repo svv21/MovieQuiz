@@ -11,7 +11,6 @@ final class MovieQuizViewController: UIViewController, AlertPresenterDelegatePro
     @IBOutlet private var noButton: UIButton!
     @IBOutlet private var activityIndicator: UIActivityIndicatorView!
     
-    private var statisticService: StatisticServiceProtocol = StatisticService()
     private var alertPresenter: AlertPresenter?
     private var presenter: MovieQuizPresenter!
     
@@ -20,14 +19,12 @@ final class MovieQuizViewController: UIViewController, AlertPresenterDelegatePro
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        presenter = MovieQuizPresenter(viewController: self)
         alertPresenter = AlertPresenter(delegate: self)
-        statisticService = StatisticService()
-        
-        showLoadingIndicator()
+        presenter = MovieQuizPresenter(viewController: self)
     }
     
     // MARK: - AlertPresenterDelegateProtocol
+    
     func presentAlert(alert: UIAlertController) {
         self.present(alert, animated: true, completion: nil)
     }
@@ -83,26 +80,14 @@ final class MovieQuizViewController: UIViewController, AlertPresenterDelegatePro
         counterLabel.text = step.questionNumber
     }
     
-    
-    func showAnswerResult(isCorrect: Bool) {
-        yesButton.isEnabled = false
-        noButton.isEnabled = false
-        
+    func highlightImageBorder(isCorrectAnswer: Bool) {
         imageView.layer.masksToBounds = true
         imageView.layer.borderWidth = 8
         imageView.layer.cornerRadius = 20
-        imageView.layer.borderColor = isCorrect ? UIColor(named: "Color 2")?.cgColor : UIColor(named: "Color 3")?.cgColor
-        
-        presenter.didAnswer(isCorrectAnswer: isCorrect)
-        
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
-            guard let self else { return }
-            self.presenter.statisticService = self.statisticService
-            self.presenter.showNextQuestionOrResults()
-        }
+        imageView.layer.borderColor = isCorrectAnswer ? UIColor(named: "Color 2")?.cgColor : UIColor(named: "Color 3")?.cgColor
     }
     
-    func finishGame(quiz result: QuizResultsViewModel) {
+    func presentFinishResults(quiz result: QuizResultsViewModel) {
         let alertModel = AlertModel(
             title: result.title,
             message: result.text,
@@ -110,9 +95,6 @@ final class MovieQuizViewController: UIViewController, AlertPresenterDelegatePro
             accessibilityIdentifier: "GameResultsAlert",
             completion: { [weak self] _ in
                 guard let self else { return }
-                
-                self.presenter.restartGame()
-                self.presenter.correctAnswer = 0
                 
                 self.presenter.restartGame()
             }
