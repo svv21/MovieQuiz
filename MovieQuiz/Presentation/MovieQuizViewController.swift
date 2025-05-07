@@ -4,7 +4,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
     
     // MARK: - Actions
     
-    @IBOutlet private var imageView: UIImageView!
+    @IBOutlet var imageView: UIImageView!
     @IBOutlet private var textLabel: UILabel!
     @IBOutlet private var counterLabel: UILabel!
     @IBOutlet private var yesButton: UIButton!
@@ -14,7 +14,6 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
     private var correctAnswer: Int = 0
     
     private var questionFactory: QuestionFactory?
-    private var currentQuestion: QuizQuestion?
     private var statisticService: StatisticServiceProtocol = StatisticService()
     private var alertPresenter: AlertPresenter?
     private let presenter = MovieQuizPresenter()
@@ -39,13 +38,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
     // MARK: - QuestionFactoryDelegate
     
     func didReceiveNextQuestion(question: QuizQuestion?) {
-        guard let question else { return }
-        
-        currentQuestion = question
-        let viewModel = presenter.convert(model: question)
-        DispatchQueue.main.async { [weak self] in
-            self?.show(quiz: viewModel)
-        }
+        presenter.didReceiveNextQuestion(question: question)
     }
     
     func didLoadDataFromServer() {
@@ -65,18 +58,16 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
     // MARK: - Actions
     
     @IBAction private func yesButtonClicked(_ sender: UIButton) {
-        presenter.currentQuestion = currentQuestion
         presenter.yesButtonClicked()
     }
     
     @IBAction private func noButtonClicked(_ sender: UIButton) {
-        presenter.currentQuestion = currentQuestion
         presenter.noButtonClicked()
     }
     
-    // MARK: - Private functions
+    // MARK: - Functions
     
-    private func setAnswerButtonsState(isEnabled: Bool) {
+    func setAnswerButtonsState(isEnabled: Bool) {
         yesButton.isEnabled = isEnabled
         noButton.isEnabled = isEnabled
     }
@@ -110,7 +101,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
         alertPresenter!.showAlert(alertModel: errorAlert)
     }
     
-    private func show(quiz step: QuizStepViewModel) {
+    func show(quiz step: QuizStepViewModel) {
         imageView.image = step.image
         textLabel.text = step.question
         counterLabel.text = step.questionNumber
@@ -132,12 +123,14 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
             guard let self else { return }
-            self.showNextQuestionOrResults()
+            self.presenter.correctAnswer = self.correctAnswer
+            self.presenter.questionFactory = self.questionFactory
+            self.presenter.statisticService = self.statisticService
+            self.presenter.showNextQuestionOrResults()
         }
-        
     }
     
-    private func finishGame(quiz result: QuizResultsViewModel) {
+    func finishGame(quiz result: QuizResultsViewModel) {
         let alertModel = AlertModel(
             title: result.title,
             message: result.text,
@@ -154,31 +147,6 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
         )
         
         alertPresenter!.showAlert(alertModel: alertModel)
-    }
-    
-    private func showNextQuestionOrResults() {
-        imageView.layer.borderWidth = 0
-        
-        setAnswerButtonsState(isEnabled: true)
-        
-        if presenter.isLastQuestion() {
-            statisticService.store(currentGameResult: GameResult(correctAnswers: correctAnswer, totalQuestions: presenter.questionsAmount, date: Date()))
-            let resultViewModel = QuizResultsViewModel(
-                title: "Этот раунд окончен!",
-                text: """
-                                        Ваш результат: \(correctAnswer)/\(presenter.questionsAmount)
-                                        Количество сыгранных квизов:\(statisticService.gamesCount)
-                                        Рекорд:\(statisticService.bestGame.correctAnswers)/\(statisticService.bestGame.totalQuestions) (\(statisticService.bestGame.date.dateTimeString))
-                                        Средняя точность: \(String(format: "%.2f", statisticService.averageAccuracy))%
-                                        """,
-                buttonText: "Сыграть еще раз"
-            )
-            
-            finishGame(quiz: resultViewModel)
-        } else {
-            presenter.switchToNextQuestion()
-            questionFactory?.requestNextQuestion()
-        }
     }
 }
 

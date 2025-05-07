@@ -11,6 +11,9 @@ final class MovieQuizPresenter {
     private var currentQuestionIndex = 0
     let questionsAmount: Int = 10
     var currentQuestion: QuizQuestion?
+    var correctAnswer: Int = 0
+    var questionFactory: QuestionFactory?
+    var statisticService: StatisticServiceProtocol = StatisticService()
     weak var viewController: MovieQuizViewController?
     
     func isLastQuestion() -> Bool {
@@ -31,6 +34,41 @@ final class MovieQuizPresenter {
             question: model.text,
             questionNumber: "\(currentQuestionIndex + 1)/\(questionsAmount)"
         )
+    }
+    
+    func didReceiveNextQuestion(question: QuizQuestion?) {
+        guard let question else { return }
+        
+        currentQuestion = question
+        let viewModel = convert(model: question)
+        DispatchQueue.main.async { [weak self] in
+            self?.viewController?.show(quiz: viewModel)
+        }
+    }
+    
+    func showNextQuestionOrResults() {
+        viewController?.imageView.layer.borderWidth = 0
+        
+        viewController?.setAnswerButtonsState(isEnabled: true)
+        
+        if self.isLastQuestion() {
+            statisticService.store(currentGameResult: GameResult(correctAnswers: correctAnswer, totalQuestions: self.questionsAmount, date: Date()))
+            let resultViewModel = QuizResultsViewModel(
+                title: "Этот раунд окончен!",
+                text: """
+                                        Ваш результат: \(correctAnswer)/\(self.questionsAmount)
+                                        Количество сыгранных квизов:\(statisticService.gamesCount)
+                                        Рекорд:\(statisticService.bestGame.correctAnswers)/\(statisticService.bestGame.totalQuestions) (\(statisticService.bestGame.date.dateTimeString))
+                                        Средняя точность: \(String(format: "%.2f", statisticService.averageAccuracy))%
+                                        """,
+                buttonText: "Сыграть еще раз"
+            )
+            
+            viewController?.finishGame(quiz: resultViewModel)
+        } else {
+            self.switchToNextQuestion()
+            questionFactory?.requestNextQuestion()
+        }
     }
     
     private func didAnswer(isYes: Bool) {
