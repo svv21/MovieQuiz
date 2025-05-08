@@ -1,6 +1,6 @@
 import UIKit
 
-final class MovieQuizViewController: UIViewController, AlertPresenterDelegateProtocol {
+final class MovieQuizViewController: UIViewController, MovieQuizViewControllerProtocol, AlertPresenterDelegateProtocol {
     
     // MARK: - Actions
     
@@ -78,6 +78,7 @@ final class MovieQuizViewController: UIViewController, AlertPresenterDelegatePro
         imageView.image = step.image
         textLabel.text = step.question
         counterLabel.text = step.questionNumber
+        imageView.layer.borderWidth = 0
     }
     
     func highlightImageBorder(isCorrectAnswer: Bool) {

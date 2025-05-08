@@ -34,6 +34,7 @@
 		F5BF270F2D914B26004D27D5 /* QuizStepViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5BF270E2D914B26004D27D5 /* QuizStepViewModel.swift */; };
 		F5BF27112D914B4D004D27D5 /* QuizResultsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5BF27102D914B4D004D27D5 /* QuizResultsViewModel.swift */; };
 		F5BF27132D914B62004D27D5 /* QuizQuestion.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5BF27122D914B62004D27D5 /* QuizQuestion.swift */; };
+		F5F3D8D32DCC2D8900C579BA /* MovieQuizViewControllerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5F3D8D22DCC2D8900C579BA /* MovieQuizViewControllerProtocol.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -85,6 +86,7 @@
 		F5BF270E2D914B26004D27D5 /* QuizStepViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuizStepViewModel.swift; sourceTree = "<group>"; };
 		F5BF27102D914B4D004D27D5 /* QuizResultsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuizResultsViewModel.swift; sourceTree = "<group>"; };
 		F5BF27122D914B62004D27D5 /* QuizQuestion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuizQuestion.swift; sourceTree = "<group>"; };
+		F5F3D8D22DCC2D8900C579BA /* MovieQuizViewControllerProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieQuizViewControllerProtocol.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -141,6 +143,7 @@
 				F59661E32DA116F500AF3F60 /* AlertPresenterDelegateProtocol.swift */,
 				F5487A182DAF99E700B158D6 /* NetworkClient.swift */,
 				F5487A1C2DAFA6E100B158D6 /* MoviesLoader.swift */,
+				F5F3D8D22DCC2D8900C579BA /* MovieQuizViewControllerProtocol.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -380,6 +383,7 @@
 				F56FCDFC2D929E1E00C57AF3 /* QuestionFactoryProtocol.swift in Sources */,
 				F5B587B62D94AD2B007A18F2 /* QuestionFactoryDelegate.swift in Sources */,
 				AD1ABAB62831907B00B3E448 /* MovieQuizViewController.swift in Sources */,
+				F5F3D8D32DCC2D8900C579BA /* MovieQuizViewControllerProtocol.swift in Sources */,
 				F5BF270F2D914B26004D27D5 /* QuizStepViewModel.swift in Sources */,
 				F59661E42DA116F500AF3F60 /* AlertPresenterDelegateProtocol.swift in Sources */,
 				F5ACC8242D9D5CD3009B9756 /* StatisticServiceProtocol.swift in Sources */,
