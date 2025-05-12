@@ -9,7 +9,7 @@ import UIKit
 
 final class AlertPresenter {
     
-    var delegate: AlertPresenterDelegateProtocol
+    weak var delegate: AlertPresenterDelegateProtocol?
     
     init(delegate: AlertPresenterDelegateProtocol) {
         self.delegate = delegate
@@ -31,6 +31,8 @@ final class AlertPresenter {
         
         alert.addAction(action)
         
-        delegate.presentAlert(alert: alert)
+        if let delegate {
+            delegate.presentAlert(alert: alert)
+        }
     }
 }

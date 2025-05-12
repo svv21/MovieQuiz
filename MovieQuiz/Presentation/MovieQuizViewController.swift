@@ -12,7 +12,7 @@ final class MovieQuizViewController: UIViewController, MovieQuizViewControllerPr
     @IBOutlet private var activityIndicator: UIActivityIndicatorView!
     
     private var alertPresenter: AlertPresenter?
-    private var presenter: MovieQuizPresenter!
+    private var presenter: MovieQuizPresenter?
     
     // MARK: - Lifecycle
     
@@ -26,17 +26,17 @@ final class MovieQuizViewController: UIViewController, MovieQuizViewControllerPr
     // MARK: - AlertPresenterDelegateProtocol
     
     func presentAlert(alert: UIAlertController) {
-        self.present(alert, animated: true, completion: nil)
+        present(alert, animated: true, completion: nil)
     }
     
     // MARK: - Actions
     
     @IBAction private func yesButtonClicked(_ sender: UIButton) {
-        presenter.yesButtonClicked()
+        presenter?.yesButtonClicked()
     }
     
     @IBAction private func noButtonClicked(_ sender: UIButton) {
-        presenter.noButtonClicked()
+            presenter?.noButtonClicked()
     }
     
     // MARK: - Functions
@@ -66,12 +66,11 @@ final class MovieQuizViewController: UIViewController, MovieQuizViewControllerPr
                                     completion: { [weak self] _ in
             guard let self else { return }
             
-            self.presenter.restartGame()
-            
-            self.presenter.restartGame()
+           
+                self.presenter?.restartGame()
         }
         )
-        alertPresenter!.showAlert(alertModel: errorAlert)
+        alertPresenter?.showAlert(alertModel: errorAlert)
     }
     
     func show(quiz step: QuizStepViewModel) {
@@ -97,10 +96,10 @@ final class MovieQuizViewController: UIViewController, MovieQuizViewControllerPr
             completion: { [weak self] _ in
                 guard let self else { return }
                 
-                self.presenter.restartGame()
+                self.presenter?.restartGame()
             }
         )
-        alertPresenter!.showAlert(alertModel: alertModel)
+        alertPresenter?.showAlert(alertModel: alertModel)
     }
 }
 

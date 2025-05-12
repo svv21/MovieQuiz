@@ -8,7 +8,7 @@
 import UIKit
 
 final class MovieQuizPresenter: QuestionFactoryDelegate {
-    private let statisticService: StatisticServiceProtocol!
+    private let statisticService: StatisticServiceProtocol?
     private var questionFactory: QuestionFactoryProtocol?
     private weak var viewController: MovieQuizViewControllerProtocol?
     
@@ -52,9 +52,7 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
     private func pressedTheButton(isYes: Bool) {
         guard let currentQuestion else { return }
         
-        let userAnswer = isYes
-        
-        showAnswerResult(isCorrect: currentQuestion.correctAnswer == userAnswer)
+        showAnswerResult(isCorrect: currentQuestion.correctAnswer == isYes)
     }
     
     private func isLastQuestion() -> Bool {
@@ -111,21 +109,22 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
     private func showNextQuestionOrResults() {
         viewController?.setAnswerButtonsState(isEnabled: true)
         
-        if self.isLastQuestion() {
-            statisticService.store(currentGameResult: GameResult(correctAnswers: correctAnswer, totalQuestions: questionsAmount, date: Date()))
-            let resultViewModel = QuizResultsViewModel(title: "Этот раунд окончен!",
-                                                       text: """
+        if isLastQuestion() {
+            if let statisticService {
+                statisticService.store(currentGameResult: GameResult(correctAnswers: correctAnswer, totalQuestions: questionsAmount, date: Date()))
+                let resultViewModel = QuizResultsViewModel(title: "Этот раунд окончен!",
+                                                           text: """
                                                                Ваш результат: \(correctAnswer)/\(self.questionsAmount)
                                                                Количество сыгранных квизов:\(statisticService.gamesCount)
                                                                Рекорд:\(statisticService.bestGame.correctAnswers)/\(statisticService.bestGame.totalQuestions) (\(statisticService.bestGame.date.dateTimeString))
                                                                Средняя точность: \(String(format: "%.2f", statisticService.averageAccuracy))%
                                                             """,
-                                                       buttonText: "Сыграть еще раз"
-            )
-            
-            viewController?.presentFinishResults(quiz: resultViewModel)
+                                                           buttonText: "Сыграть еще раз"
+                )
+                viewController?.presentFinishResults(quiz: resultViewModel)
+            }
         } else {
-            self.switchToNextQuestion()
+            switchToNextQuestion()
             questionFactory?.requestNextQuestion()
         }
     }
