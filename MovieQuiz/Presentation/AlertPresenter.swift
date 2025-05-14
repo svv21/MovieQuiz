@@ -9,7 +9,7 @@ import UIKit
 
 final class AlertPresenter {
     
-    var delegate: AlertPresenterDelegateProtocol
+    weak var delegate: AlertPresenterDelegateProtocol?
     
     init(delegate: AlertPresenterDelegateProtocol) {
         self.delegate = delegate
@@ -21,6 +21,7 @@ final class AlertPresenter {
             message: alertModel.message,
             preferredStyle: .alert
         )
+        alert.view.accessibilityIdentifier = alertModel.accessibilityIdentifier
         
         let action = UIAlertAction(
             title: alertModel.buttonText,
@@ -29,7 +30,7 @@ final class AlertPresenter {
         )
         
         alert.addAction(action)
-        
-        delegate.presentAlert(alert: alert)
+
+        delegate?.presentAlert(alert: alert)
     }
 }
