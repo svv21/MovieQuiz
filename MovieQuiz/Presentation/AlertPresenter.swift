@@ -30,9 +30,7 @@ final class AlertPresenter {
         )
         
         alert.addAction(action)
-        
-        if let delegate {
-            delegate.presentAlert(alert: alert)
-        }
+
+        delegate?.presentAlert(alert: alert)
     }
 }
